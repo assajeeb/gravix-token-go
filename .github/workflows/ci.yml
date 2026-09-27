@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  library:
+    name: library (go ${{ matrix.go }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 1.21 is the floor the root go.mod promises to users; keep it tested.
+        go: ['1.21.x', '1.26.x']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: go.sum
+      - run: go vet ./...
+      - run: go test ./...
+
+  conformance:
+    # Separate module: verifies tokens with the Gravix server's own verifier
+    # (livekit/protocol/auth). Its go directive is 1.26 because livekit/protocol
+    # declares go 1.26; the library itself stays at 1.21.
+    name: conformance (server verifier)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: conformance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: conformance/go.sum
+      - run: go test ./...
