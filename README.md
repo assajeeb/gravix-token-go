@@ -35,7 +35,7 @@ The conformance module needs Go 1.26 because its dependency `github.com/livekit/
 (the server's verifier) declares `go 1.26`. It is a separate module with a `replace ../`,
 so the library's users never download it or inherit that requirement.
 
-A TypeScript version with the same options is `@gravitycompile/gravix-token` on npm.
+A TypeScript version with the same options is `gravix-rtc-token` on npm.
 
 ## License
 
