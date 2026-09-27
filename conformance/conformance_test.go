@@ -41,7 +41,7 @@ func TestServerVerifierAcceptsAndReadsTheGrants(t *testing.T) {
 	if g.Identity != "alice" || g.Name != "Alice" || g.Metadata != "m" || g.Attributes["seat"] != "1" {
 		t.Fatalf("grants %+v", g)
 	}
-	if !g.Video.RoomJoin || g.Video.Room != "APPconf_standup" || g.Video.GetCanPublish() || !g.Video.GetCanSubscribe() || !g.Video.GetCanPublishData() {
+	if !g.Video.RoomJoin || g.Video.Room != "APPconf_standup" || g.Video.GetCanPublish() || !g.Video.GetCanSubscribe() || !g.Video.GetCanPublishData() || !g.Video.GetCanUpdateOwnMetadata() {
 		t.Fatalf("video %+v", g.Video)
 	}
 	if !strings.HasPrefix(g.Video.Room, "APPconf_") {

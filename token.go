@@ -39,15 +39,16 @@ type Builder struct {
 	room, identity, name, meta string
 	attrs                      map[string]string
 	ttl                        time.Duration
-	pub, sub, data             bool
+	pub, sub, data, ownMeta    bool
 	hidden, admin              bool
 	canPublishSources          []string
 	now                        func() time.Time
 }
 
-// New starts a token for the app. Publish, subscribe and data are allowed by default.
+// New starts a token for the app. Publish, subscribe, data and updating the
+// user's own name/metadata/attributes are allowed by default.
 func New(appID, appCertificate string) *Builder {
-	return &Builder{appID: appID, cert: appCertificate, ttl: DefaultTTL, pub: true, sub: true, data: true, now: time.Now}
+	return &Builder{appID: appID, cert: appCertificate, ttl: DefaultTTL, pub: true, sub: true, data: true, ownMeta: true, now: time.Now}
 }
 
 // Room sets the room to join; the "<AppID>_" prefix is added if missing.
@@ -78,6 +79,11 @@ func (b *Builder) CanSubscribe(v bool) *Builder { b.sub = v; return b }
 // CanPublishData (default true): data messages and chat.
 func (b *Builder) CanPublishData(v bool) *Builder { b.data = v; return b }
 
+// CanUpdateOwnMetadata (default true): the user may change its own name,
+// metadata and attributes (the Gravix SDKs publish e.g. the camera facing as an
+// attribute). Attributes under "gravix." stay the server's either way.
+func (b *Builder) CanUpdateOwnMetadata(v bool) *Builder { b.ownMeta = v; return b }
+
 // CanPublishSources limits publishing to these sources ("camera", "microphone",
 // "screen_share", "screen_share_audio"). Empty = any.
 func (b *Builder) CanPublishSources(s ...string) *Builder { b.canPublishSources = s; return b }
@@ -95,6 +101,7 @@ type videoGrant struct {
 	CanPublish        *bool    `json:"canPublish"`
 	CanSubscribe      *bool    `json:"canSubscribe"`
 	CanPublishData    *bool    `json:"canPublishData"`
+	CanUpdateOwnMeta  *bool    `json:"canUpdateOwnMetadata"`
 	CanPublishSources []string `json:"canPublishSources,omitempty"`
 	Hidden            bool     `json:"hidden,omitempty"`
 }
@@ -124,7 +131,7 @@ func (b *Builder) ToJWT() (string, error) {
 		return "", fmt.Errorf("gravixtoken: TTL %v must be in (0, %v]", b.ttl, MaxTTL)
 	}
 	now := b.now()
-	pub, sub, data := b.pub, b.sub, b.data
+	pub, sub, data, ownMeta := b.pub, b.sub, b.data, b.ownMeta
 	c := claims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    b.appID,
@@ -138,7 +145,7 @@ func (b *Builder) ToJWT() (string, error) {
 		Attributes: b.attrs,
 		Video: &videoGrant{
 			RoomJoin: true, Room: b.room, RoomAdmin: b.admin,
-			CanPublish: &pub, CanSubscribe: &sub, CanPublishData: &data,
+			CanPublish: &pub, CanSubscribe: &sub, CanPublishData: &data, CanUpdateOwnMeta: &ownMeta,
 			CanPublishSources: b.canPublishSources, Hidden: b.hidden,
 		},
 	}

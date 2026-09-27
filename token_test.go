@@ -36,7 +36,7 @@ func TestTokenCarriesTheAppPrefixedRoomAndDefaults(t *testing.T) {
 		t.Fatalf("claims %v", c)
 	}
 	v := c["video"].(map[string]any)
-	if v["room"] != "APPabc_standup" || v["roomJoin"] != true || v["canPublish"] != true || v["canSubscribe"] != true || v["canPublishData"] != true {
+	if v["room"] != "APPabc_standup" || v["roomJoin"] != true || v["canPublish"] != true || v["canSubscribe"] != true || v["canPublishData"] != true || v["canUpdateOwnMetadata"] != true {
 		t.Fatalf("video grant %v", v)
 	}
 	if exp, nbf := c["exp"].(float64), c["nbf"].(float64); exp-nbf != 7200 {
@@ -86,5 +86,14 @@ func TestRefusesWhatTheServerWouldRefuse(t *testing.T) {
 func TestRoomNameHelpers(t *testing.T) {
 	if RoomName("APPa", "x") != "APPa_x" || DisplayName("APPa", "APPa_x") != "x" || DisplayName("APPa", "other") != "other" {
 		t.Fatal("helpers")
+	}
+}
+
+// The Gravix SDKs publish their own attributes (Flutter: cameraFacing); the old
+// auth service granted this by default, so the libraries do too, and it can be off.
+func TestCanUpdateOwnMetadataDefaultsOnAndCanBeOff(t *testing.T) {
+	jwt, _ := New("APPabc", "s-0123456789abcdef0123456789abcdef").Room("r").Identity("a").CanUpdateOwnMetadata(false).ToJWT()
+	if got := decode(t, jwt)["video"].(map[string]any)["canUpdateOwnMetadata"]; got != false {
+		t.Fatalf("canUpdateOwnMetadata %v", got)
 	}
 }
