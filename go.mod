@@ -1,4 +1,4 @@
-module github.com/gravitycompile/gravix-token-go
+module github.com/assajeeb/gravix-token-go
 
 go 1.21
 

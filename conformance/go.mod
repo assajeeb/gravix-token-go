@@ -1,9 +1,9 @@
-module github.com/gravitycompile/gravix-token-go/conformance
+module github.com/assajeeb/gravix-token-go/conformance
 
 go 1.26
 
 require (
-	github.com/gravitycompile/gravix-token-go v0.0.0
+	github.com/assajeeb/gravix-token-go v0.0.0
 	github.com/livekit/protocol v1.51.1-0.20260905133529-a4f4b5c0c23f
 )
 
@@ -80,4 +80,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/gravitycompile/gravix-token-go => ../
+replace github.com/assajeeb/gravix-token-go => ../

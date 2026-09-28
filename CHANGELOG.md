@@ -1,7 +1,15 @@
 # Changelog
 
-All notable changes to `github.com/gravitycompile/gravix-token-go`. This project
+All notable changes to `github.com/assajeeb/gravix-token-go` (module path
+`github.com/gravitycompile/gravix-token-go` before 2026-09-28). This project
 follows [semantic versioning](https://semver.org/); releases are git tags `vX.Y.Z`.
+
+## Unreleased
+
+- Module path changed from `github.com/gravitycompile/gravix-token-go` to
+  `github.com/assajeeb/gravix-token-go` (2026-09-28). Update imports and `go get` lines.
+- License changed from Apache-2.0 to MIT (Copyright (c) 2024-2026 Gravity
+  Compile). All code is Gravity Compile's.
 
 ## v0.1.1
 

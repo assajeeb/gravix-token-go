@@ -5,13 +5,13 @@ Mint Gravix Cloud join tokens **in your own Go backend**. The Gravix server veri
 ## Install
 
 ```sh
-go get github.com/gravitycompile/gravix-token-go@latest
+go get github.com/assajeeb/gravix-token-go@latest
 ```
 
 ## Usage
 
 ```go
-import gravixtoken "github.com/gravitycompile/gravix-token-go"
+import gravixtoken "github.com/assajeeb/gravix-token-go"
 
 jwt, err := gravixtoken.New(os.Getenv("GRAVIX_APP_ID"), os.Getenv("GRAVIX_APP_CERTIFICATE")).
 	Room("standup").          // server-side room "<AppID>_standup"
@@ -39,4 +39,4 @@ A TypeScript version with the same options is `gravix-rtc-token` on npm.
 
 ## License
 
-Apache-2.0. See [LICENSE](./LICENSE).
+MIT, Copyright (c) 2024-2026 Gravity Compile. See [LICENSE](./LICENSE).
