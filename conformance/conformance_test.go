@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	gravixtoken "github.com/gravitycompile/gravix-token-go"
+	gravixtoken "github.com/assajeeb/gravix-token-go"
 	"github.com/livekit/protocol/auth"
 )
 
