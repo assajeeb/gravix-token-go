@@ -120,7 +120,7 @@ func (b *Builder) ToJWT() (string, error) {
 	case b.appID == "":
 		return "", errors.New("gravixtoken: app ID is empty")
 	case strings.Contains(b.appID, Separator):
-		return "", fmt.Errorf("gravixtoken: app ID %q contains %q", b.appID, Separator)
+		return "", fmt.Errorf("gravixtoken: app ID must not contain %q", Separator)
 	case len(b.cert) < 32:
 		return "", errors.New("gravixtoken: app certificate is shorter than 32 characters")
 	case b.room == "":
@@ -128,7 +128,7 @@ func (b *Builder) ToJWT() (string, error) {
 	case b.identity == "":
 		return "", errors.New("gravixtoken: identity is required")
 	case b.ttl <= 0 || b.ttl > MaxTTL:
-		return "", fmt.Errorf("gravixtoken: TTL %v must be in (0, %v]", b.ttl, MaxTTL)
+		return "", fmt.Errorf("gravixtoken: TTL must be in (0, %v]", MaxTTL)
 	}
 	now := b.now()
 	pub, sub, data, ownMeta := b.pub, b.sub, b.data, b.ownMeta

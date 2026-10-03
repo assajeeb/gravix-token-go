@@ -97,3 +97,34 @@ func TestCanUpdateOwnMetadataDefaultsOnAndCanBeOff(t *testing.T) {
 		t.Fatalf("canUpdateOwnMetadata %v", got)
 	}
 }
+
+// Errors end up in app logs and crash reports: they name the field, never the value.
+func TestErrorsNameTheFieldButNeverQuoteCallerValues(t *testing.T) {
+	const app, room, id, badCert, cert = "LEAKAPP9f3c", "leakroom77", "leakuser55", "leakcert", "s-0123456789abcdef0123456789abcdef"
+	cases := []struct {
+		field string
+		b     *Builder
+	}{
+		{"app ID", New("", cert).Room(room).Identity(id)},
+		{"app ID", New(app+"_x", cert).Room(room).Identity(id)},
+		{"app certificate", New(app, badCert).Room(room).Identity(id)},
+		{"room", New(app, cert).Identity(id)},
+		{"identity", New(app, cert).Room(room)},
+		{"TTL", New(app, cert).Room(room).Identity(id).TTL(25*time.Hour + 17*time.Second)},
+	}
+	for _, c := range cases {
+		_, err := c.b.ToJWT()
+		if err == nil {
+			t.Fatalf("%s: no error", c.field)
+		}
+		msg := err.Error()
+		if !strings.Contains(msg, c.field) {
+			t.Errorf("error %q does not name %q", msg, c.field)
+		}
+		for _, v := range []string{app, room, id, badCert, cert, "25h0m17s"} {
+			if strings.Contains(msg, v) {
+				t.Errorf("error %q quotes a caller value", msg)
+			}
+		}
+	}
+}
